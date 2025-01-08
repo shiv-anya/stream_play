@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { CiSearch } from "react-icons/ci";
-import {
-  MdCheckCircleOutline,
-  MdDoneAll,
-  MdErrorOutline,
-} from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
+import Modal from "./UI/Modal";
+import ChatList from "./ChatList";
 
 const SearchBar = () => {
   return (
@@ -42,7 +40,6 @@ const FilterList = () => {
   );
 };
 const StoryElement = ({ name, img }) => {
-  console.log(img);
   const imageUrl = require(`../img/${img}`);
   console.log(imageUrl);
   return (
@@ -74,113 +71,50 @@ const Stories = () => {
       img: "img-4.jpg",
     },
   ];
+  const [selectedStory, setSelectedStory] = useState(null);
 
+  const openModal = (story) => {
+    console.log("here");
+    setSelectedStory(story); // Set the selected story to display in the modal
+  };
+
+  const closeModal = () => {
+    setSelectedStory(null); // Reset selected story to close the modal
+  };
   return (
-    <div className="w-full h-[20%]">
+    <div className="w-full h-[20%] mb-16">
       <h2 className="font-semibold">Stories</h2>
       <div className="w-full h-full">
         <ul className="w-full flex text-xs h-full gap-4 flex-row">
           {stories.map((item) => (
-            <li key={item.name} className="flex-1">
+            <li
+              key={item.name}
+              className="flex-1 cursor-pointer"
+              onClick={() => openModal(item)}
+            >
               <StoryElement name={item.name} img={item.img} />
             </li>
           ))}
         </ul>
-      </div>
-    </div>
-  );
-};
-
-const ChatElement = ({ name, time, deliveryStatus, message }) => {
-  let deliveryIcon = <MdErrorOutline />;
-  if (deliveryStatus === "delivered") {
-    deliveryIcon = <MdCheckCircleOutline />;
-  } else if (deliveryStatus === "read") deliveryIcon = <MdDoneAll />;
-  return (
-    <div className="w-full h-full rounded-lg hover:bg-gray-200 flex justify-between p-3 items-center">
-      <div
-        className="size-10 rounded-full bg-center bg-cover"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400')",
-        }}
-      ></div>
-      <div className="w-[80%] flex flex-col gap-1">
-        <div className="w-full flex flex-row justify-between items-center">
-          <h3 className="text-base font-normal">{name}</h3>
-          <span className="text-xs">{time}</span>
-        </div>
-        <div className="flex flex-row gap-2 items-center text-gray-700">
-          <span className="text-xs">{deliveryIcon}</span>
-          <p className="text-xs">{message}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ChatList = () => {
-  const messages = [
-    {
-      name: "Alice Johnson",
-      time: "10:15 AM",
-      deliveryStatus: "delivered",
-      message: "Hey, are you free today?",
-    },
-    {
-      name: "Bob Smith",
-      time: "11:00 AM",
-      deliveryStatus: "read",
-      message: "Don't forget the meeting at 3 PM.",
-    },
-    {
-      name: "Charlie Davis",
-      time: "1:45 PM",
-      deliveryStatus: "failed",
-      message: "Can you call me back?",
-    },
-    {
-      name: "Diana Brown",
-      time: "2:30 PM",
-      deliveryStatus: "read",
-      message: "Got it, thanks!",
-    },
-    {
-      name: "Evan Williams",
-      time: "3:20 PM",
-      deliveryStatus: "delivered",
-      message: "See you tomorrow.",
-    },
-    {
-      name: "Fiona Clark",
-      time: "4:05 PM",
-      deliveryStatus: "failed",
-      message: "The files didn't upload. Can you resend?",
-    },
-    {
-      name: "George Miller",
-      time: "5:00 PM",
-      deliveryStatus: "delivered",
-      message: "Let’s finalize the designs this week.",
-    },
-  ];
-
-  return (
-    <div className="h-[40%] mt-16">
-      <h2 className="mb-5 font-semibold">Chats</h2>
-      <div className="h-full">
-        <ul className="h-full overflow-hidden hover:overflow-y-scroll flex flex-col gap-2 scrollbar-thin scrollbar-thumb-indigo-500">
-          {messages.map((item) => (
-            <li className="w-full h-full first:bg-gray-200 rounded-lg">
-              <ChatElement
-                name={item.name}
-                time={item.time}
-                deliveryStatus={item.deliveryStatus}
-                message={item.message}
-              />
-            </li>
-          ))}
-        </ul>
+        {selectedStory && (
+          <Modal isOpen={!!selectedStory} onClose={closeModal}>
+            <div className="h-[98%] w-1/4 rounded-3xl bg-white">
+              <div
+                style={{
+                  backgroundImage: `url(${require(`../img/${selectedStory.img}`)})`,
+                }}
+                className={`h-full w-full bg-cover bg-center rounded-3xl`}
+              >
+                <div className="w-full bg-[rgba(0,0,0,0.5)] h-[10%] relative rounded-t-3xl p-3 flex justify-between items-center text-white">
+                  <div>{selectedStory.name}</div>
+                  <div className="cursor-pointer text-lg" onClick={closeModal}>
+                    <RxCross2 />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Modal>
+        )}
       </div>
     </div>
   );

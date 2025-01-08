@@ -42,7 +42,7 @@ const InputForm = () => {
           onChange={handleInputChange}
           rows={1}
           placeholder="Type your message here"
-          className="w-full resize-none border-none rounded-lg bg-gray-200 p-3 focus:ring-2 focus:ring-gray-300 focus:outline-none max-h-40 overflow-y-auto"
+          className="w-full resize-none border-none rounded-lg bg-gray-200 p-3 focus:ring-1 focus:ring-gray-300 focus:outline-none max-h-40 overflow-y-auto"
           style={{ lineHeight: "1.5rem" }}
         />
       </div>

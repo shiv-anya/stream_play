@@ -3,3 +3,7 @@ export { default as ChatBox } from "./ChatBox";
 export { default as ChatListMenu } from "./ChatListMenu";
 export { default as ChatUserInfo } from "./ChatUserInfo";
 export { default as Login } from "./Auth/Login";
+export { default as ChannelSearchBar } from "./ChannelSearchBar";
+export { default as ChannelListMenu } from "./ChannelListMenu";
+export { default as ChatElement } from "./ChatElement";
+export { default as ChatList } from "./ChatList";

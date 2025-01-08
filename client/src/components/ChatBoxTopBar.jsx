@@ -8,7 +8,7 @@ const ChatBoxTopBar = ({ openInfo }) => {
     <div className="h-[15%] flex justify-between items-center p-5">
       <div className="flex gap-4">
         <div className="relative">
-          <div class="bg-[url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400')] size-10 bg-cover bg-center rounded-full"></div>
+          <div className="bg-[url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400')] size-10 bg-cover bg-center rounded-full"></div>
           <div className="border border-white size-2 bg-green-400 absolute bottom-1 right-0 rounded-full"></div>
         </div>
         <div className="flex flex-col">
