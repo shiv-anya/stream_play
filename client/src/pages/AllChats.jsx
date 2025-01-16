@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ChatBox, ChatListMenu, ChatUserInfo } from "../components";
+import Layout from "../components/UI/Layout";
 
 const AllChats = () => {
   const [infoMenuOpen, setInfoMenuOpen] = useState(false);
@@ -7,11 +8,13 @@ const AllChats = () => {
     setInfoMenuOpen(!infoMenuOpen);
   };
   return (
-    <div className="flex">
-      <ChatListMenu />
-      <ChatBox openInfo={openInfo} />
-      {infoMenuOpen && <ChatUserInfo />}
-    </div>
+    <Layout>
+      <div className="flex">
+        <ChatListMenu />
+        <ChatBox openInfo={openInfo} />
+        {infoMenuOpen && <ChatUserInfo />}
+      </div>
+    </Layout>
   );
 };
 
