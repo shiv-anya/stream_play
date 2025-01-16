@@ -11,6 +11,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { MdFacebook } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { FaArrowRight } from "react-icons/fa6";
+import { useNavigate } from "react-router";
 
 const cookies = new Cookies();
 
@@ -23,6 +24,7 @@ const initialState = {
 };
 
 const FormDiv = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState(initialState);
   const [isSignUp, setIsSignUp] = useState(true);
   const toggleSignUp = () => {
@@ -53,6 +55,7 @@ const FormDiv = () => {
       cookies.set("hashedPassword", hashedPassword);
       cookies.set("email", email);
     }
+    navigate("/chats");
     window.location.reload();
   };
   return (

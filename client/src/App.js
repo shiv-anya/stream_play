@@ -4,6 +4,7 @@ import { Chat } from "stream-chat-react";
 import Cookies from "universal-cookie";
 import { Login, Menu } from "./components";
 import { AllChats, AllChannels } from "./pages";
+import { Route, Routes } from "react-router";
 
 const cookies = new Cookies();
 
@@ -38,15 +39,13 @@ function App() {
     return <h1 className="text-center text-xl">Setting up connection...</h1>;
   if (!authToken) return <Login />;
   return (
-    <div className="flex">
-      <Chat client={client} theme="team light">
-        <Menu />
-        <div className="w-full">
-          <AllChannels />
-          {/* <AllChats /> */}
-        </div>
-      </Chat>
-    </div>
+    <Chat client={client} theme="team light">
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/channels" element={<AllChannels />} />
+        <Route path="/chats" element={<AllChats />} />
+      </Routes>
+    </Chat>
   );
 }
 

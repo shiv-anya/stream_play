@@ -6,6 +6,7 @@ import { GoPeople } from "react-icons/go";
 import { PiSquaresFourLight } from "react-icons/pi";
 import { AiOutlineLogout } from "react-icons/ai";
 import Cookies from "universal-cookie";
+import { NavLink, useNavigate } from "react-router";
 
 const cookies = new Cookies();
 
@@ -18,24 +19,47 @@ const SideBar = ({ logout }) => {
         className="size-8 cursor-pointer"
       />
       <div className="text-2xl text-gray-500 flex flex-col gap-2 items-center">
-        <div
-          className="hover:text-white hover:bg-indigo-500 p-3 rounded-lg cursor-pointer"
-          title="All Chats"
+        <NavLink
+          to={"/chats"}
+          className={({ isActive }) =>
+            isActive ? "bg-indigo-500 text-white rounded-full" : "bg-white"
+          }
         >
-          <BsChat />
-        </div>
-        <div
-          className="hover:text-white hover:bg-indigo-500 p-3 rounded-lg cursor-pointer"
-          title="Contacts"
+          <div
+            className={
+              "hover:text-white hover:bg-indigo-500 p-3 rounded-lg cursor-pointer"
+            }
+            title="All Chats"
+          >
+            <BsChat />
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/contacts"}
+          className={({ isActive }) =>
+            isActive ? "bg-indigo-500 text-white rounded-full" : "bg-white"
+          }
         >
-          <GoPeople />
-        </div>
-        <div
-          className="hover:text-white hover:bg-indigo-500 p-3 rounded-lg cursor-pointer"
-          title="Channels"
+          <div
+            className="hover:text-white hover:bg-indigo-500 p-3 rounded-lg cursor-pointer"
+            title="Contacts"
+          >
+            <GoPeople />
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/channels"}
+          className={({ isActive }) =>
+            isActive ? "bg-indigo-500 text-white rounded-full" : "bg-white"
+          }
         >
-          <PiSquaresFourLight />
-        </div>
+          <div
+            className="hover:text-white hover:bg-indigo-500 p-3 rounded-lg cursor-pointer"
+            title="Channels"
+          >
+            <PiSquaresFourLight />
+          </div>
+        </NavLink>
       </div>
       <div className="text-2xl text-gray-500 flex flex-col gap-4 items-center">
         <div className="cursor-pointer hover:bg-indigo-500 hover:text-white p-2 rounded-full">
@@ -53,6 +77,7 @@ const SideBar = ({ logout }) => {
 };
 
 const Menu = () => {
+  const navigate = useNavigate();
   const logout = () => {
     cookies.remove("token");
     cookies.remove("userId");
@@ -60,6 +85,7 @@ const Menu = () => {
     cookies.remove("fullName");
     cookies.remove("hashedPassword");
     cookies.remove("email");
+    navigate("/");
     window.location.reload();
   };
   return <SideBar logout={logout} />;
