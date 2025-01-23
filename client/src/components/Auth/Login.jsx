@@ -37,7 +37,11 @@ const FormDiv = () => {
     e.preventDefault();
     const { fullName, username, email, password } = form;
     console.log(form);
-    const URL = "http://localhost:3001/auth";
+    const BASE_URL =
+      process.env.NODE_ENV === "development"
+        ? process.env.REACT_APP_LOCAL_URL
+        : process.env.REACT_APP_BACKEND_URL;
+    const URL = `${BASE_URL}/auth`;
     const {
       data: { token, userId, hashedPassword },
     } = await axios.post(`${URL}/${isSignUp ? "signup" : "login"}`, {
