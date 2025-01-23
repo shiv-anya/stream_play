@@ -11,7 +11,7 @@ const cookies = new Cookies();
 
 const apiKey = process.env.REACT_APP_API_KEY;
 const authToken = cookies.get("token");
-
+console.log(apiKey);
 const client = StreamChat.getInstance(apiKey);
 
 if (authToken) {
