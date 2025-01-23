@@ -8,6 +8,18 @@
   box-sizing: border-box;
 }
 
+.str-chat__message-bubble {
+  background-color: #4f46e5; /* Indigo */
+  color: white;
+  border-radius: 18px;
+}
+.str-chat__message-text {
+  border-radius: 18px;
+}
+.str-chat__message--deleted-inner {
+  background-color: #333;
+}
+
 @layer utilities {
   .scrollbar-thin::-webkit-scrollbar {
     width: 6px; /* Make scrollbar thinner */
