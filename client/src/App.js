@@ -10,6 +10,7 @@ import { CustomClasses } from "stream-chat-react";
 const cookies = new Cookies();
 
 const apiKey = process.env.REACT_APP_API_KEY;
+const baseurl = process.env.REACT_APP_BACKEND_URL;
 const authToken = cookies.get("token");
 console.log(apiKey);
 const client = StreamChat.getInstance(apiKey);
