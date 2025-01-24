@@ -1,10 +1,10 @@
 import React from "react";
 import {
-  Channel,
   MessageList,
   MessageInput,
   Thread,
   useChannelStateContext,
+  useTypingContext,
   MessageSimple,
 } from "stream-chat-react";
 import "stream-chat-react/dist/css/v2/index.css";
@@ -14,16 +14,25 @@ const CustomMessage = (props) => {
 };
 
 const CustomMessageInput = () => {
-  return <MessageInput focus fileUpload giphy />;
+  return <MessageInput focus fileUpload audioRecordingEnabled />;
 };
 
 const ChatBoxMiddle = () => {
   const { thread } = useChannelStateContext();
-
+  const { typing } = useTypingContext();
+  const typingUsers = Object.values(typing)
+    .filter((user) => user.user?.name)
+    .map((user) => user.user.name);
   return (
-    <div className="flex w-full h-[85%] bg-green-300 flex-col">
+    <div className="flex w-full h-[85%] bg-green-300">
       <div className="w-full h-full flex flex-col bg-[url('./img/wallpaper.jpg')]">
         <MessageList Message={CustomMessage} />
+        <div className="text-xs p-5 pt-0">
+          {typingUsers.length > 0 &&
+            `${typingUsers.join(", ")} ${
+              typingUsers.length > 1 ? "are" : "is"
+            } typing...`}
+        </div>
         <CustomMessageInput />
       </div>
       {thread && (

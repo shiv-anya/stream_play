@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   MdCheckCircleOutline,
   MdDoneAll,
@@ -10,10 +10,38 @@ const ChatElement = ({
   displayImage,
   displayTitle,
   messageDeliveryStatus = "delivered",
-  time = "08:00 P.M.",
+  lastMessage,
   onSelect,
   channel,
+  isTyping,
 }) => {
+  const formatFriendlyDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+
+    // Check if the date is today
+    const isToday =
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear();
+
+    // Format time in 12-hour format
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12; // Convert to 12-hour format
+    const time = `${hours}:${minutes} ${ampm}`;
+
+    if (isToday) {
+      return `${time}`;
+    } else {
+      // Format as "Day at time" for other dates
+      const options = { weekday: "long" }; // Long weekday format
+      const day = date.toLocaleDateString("en-US", options).substring(0, 3);
+      return `${day}`;
+    }
+  };
+
   let deliveryIcon = <MdErrorOutline />;
   if (messageDeliveryStatus === "delivered") {
     deliveryIcon = <MdCheckCircleOutline />;
@@ -38,11 +66,15 @@ const ChatElement = ({
       <div className="w-[80%] flex flex-col gap-1">
         <div className="w-full flex flex-row justify-between items-center">
           <h3 className="text-base font-normal">{displayTitle}</h3>
-          <span className="text-xs">{time}</span>
+          <span className="text-xs">
+            {lastMessage?.created_at
+              ? formatFriendlyDate(lastMessage?.created_at)
+              : ""}
+          </span>
         </div>
         <div className="flex flex-row gap-2 items-center text-gray-700">
           <span className="text-xs">{deliveryIcon}</span>
-          <p className="text-xs">{latestMessage}</p>
+          <p className="text-xs">{isTyping ? "Typing..." : latestMessage}</p>
         </div>
       </div>
     </div>

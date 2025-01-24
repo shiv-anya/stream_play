@@ -20,6 +20,7 @@ const ChannelListMenu = ({ onSelect }) => {
             return <ChatList {...props} />;
           }}
           Preview={(props) => {
+            console.log(props);
             return <ChatElement {...props} onSelect={onSelect} />;
           }}
         />
