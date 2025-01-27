@@ -48,7 +48,7 @@ const ChatElement = ({
   } else if (messageDeliveryStatus === "read") deliveryIcon = <MdDoneAll />;
   return (
     <div
-      className="w-full h-full rounded-lg hover:bg-gray-200 flex justify-between p-3 items-center"
+      className="w-full h-[100px] rounded-lg hover:bg-gray-200 flex justify-between p-3 items-center"
       onClick={() => onSelect(channel)}
     >
       {displayImage ? (

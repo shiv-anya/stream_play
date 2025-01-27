@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChatList = ({ children, error = false, loading, type = "team" }) => {
+const ChatList = ({ children, error = false, loading, type }) => {
   // h-[40%] mt-16
   if (error) {
     return (
@@ -15,7 +15,7 @@ const ChatList = ({ children, error = false, loading, type = "team" }) => {
     );
   }
   return (
-    <div className="h-full mt-5">
+    <div className={`${type === "team" ? "h-[90%] mt-5" : "h-[50%] mt-5"}`}>
       <h2 className="mb-5 font-semibold">
         {type === "team" ? "Channel Chats" : "Direct Messages"}
       </h2>

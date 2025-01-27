@@ -35,19 +35,6 @@ const SideBar = ({ logout }) => {
           </div>
         </NavLink>
         <NavLink
-          to={"/contacts"}
-          className={({ isActive }) =>
-            isActive ? "bg-indigo-500 text-white rounded-full" : "bg-white"
-          }
-        >
-          <div
-            className="hover:text-white hover:bg-indigo-500 p-3 rounded-lg cursor-pointer"
-            title="Contacts"
-          >
-            <GoPeople />
-          </div>
-        </NavLink>
-        <NavLink
           to={"/channels"}
           className={({ isActive }) =>
             isActive ? "bg-indigo-500 text-white rounded-full" : "bg-white"

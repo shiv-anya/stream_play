@@ -14,7 +14,14 @@ const CustomMessage = (props) => {
 };
 
 const CustomMessageInput = () => {
-  return <MessageInput focus fileUpload audioRecordingEnabled />;
+  return (
+    <MessageInput
+      focus
+      fileUpload
+      audioRecordingEnabled
+      additionalMessageInputProps={{ giphyEnabled: true }}
+    />
+  );
 };
 
 const ChatBoxMiddle = () => {

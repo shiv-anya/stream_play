@@ -32,7 +32,7 @@ function App() {
   const customClasses = {
     chatContainer: "h-screen",
     channel: "w-full h-full flex flex-col",
-    channelList: "h-[70%] border-none",
+    channelList: "h-[80%] border-none",
     messageList:
       "w-full px-5 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500",
   };

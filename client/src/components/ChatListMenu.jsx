@@ -3,9 +3,31 @@ import { IoMdAdd } from "react-icons/io";
 import { CiSearch } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
 import Modal from "./UI/Modal";
+import { ChannelList, useChatContext } from "stream-chat-react";
 import ChatList from "./ChatList";
+import ChatElement from "./ChatElement";
+import GenericList from "./GenericList";
 
 const SearchBar = () => {
+  const [openList, setOpenList] = useState(false);
+  const { client } = useChatContext();
+  const [usersList, setUsersList] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await client.queryUsers(
+          { role: "user" },
+          { id: 1 },
+          { limit: 30 }
+        );
+        console.log(response.users);
+        setUsersList(response.users);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    fetchUsers();
+  }, []);
   return (
     <div className="flex w-full justify-between gap-2">
       <form className="bg-gray-100 rounded-lg flex w-full flex-row">
@@ -18,27 +40,37 @@ const SearchBar = () => {
           <CiSearch />
         </button>
       </form>
-      <button className="bg-indigo-500 p-3 rounded-lg text-xl text-white">
+      <Modal isOpen={openList} onClose={() => setOpenList(false)}>
+        <GenericList
+          list={usersList}
+          type={"messaging"}
+          onClose={() => setOpenList(false)}
+        />
+      </Modal>
+      <button
+        className="bg-indigo-500 p-3 rounded-lg text-xl text-white"
+        onClick={() => setOpenList(true)}
+      >
         <IoMdAdd />
       </button>
     </div>
   );
 };
 
-const FilterList = () => {
-  return (
-    <ul className="text-xs flex gap-4 my-5">
-      <li className="flex flex-col items-center gap-1">
-        <button>All</button>
-        <div className="rounded-full bg-indigo-500 size-1"></div>
-      </li>
-      <li className="flex flex-col items-center gap-1">
-        <button>Direct</button>
-        <div className="rounded-full bg-indigo-500 size-1"></div>
-      </li>
-    </ul>
-  );
-};
+// const FilterList = () => {
+//   return (
+//     <ul className="text-xs flex gap-4 my-5">
+//       <li className="flex flex-col items-center gap-1">
+//         <button>All</button>
+//         <div className="rounded-full bg-indigo-500 size-1"></div>
+//       </li>
+//       <li className="flex flex-col items-center gap-1">
+//         <button>Direct</button>
+//         <div className="rounded-full bg-indigo-500 size-1"></div>
+//       </li>
+//     </ul>
+//   );
+// };
 const StoryElement = ({ name, img }) => {
   const imageUrl = require(`../img/${img}`);
   console.log(imageUrl);
@@ -82,7 +114,7 @@ const Stories = () => {
     setSelectedStory(null); // Reset selected story to close the modal
   };
   return (
-    <div className="w-full h-[20%] mb-16">
+    <div className="w-full h-[20%] mb-16 my-5">
       <h2 className="font-semibold">Stories</h2>
       <div className="w-full h-full">
         <ul className="w-full flex text-xs h-full gap-4 flex-row">
@@ -120,13 +152,24 @@ const Stories = () => {
   );
 };
 
-const ChatListMenu = () => {
+const ChatListMenu = ({ onSelect }) => {
   return (
     <div className="h-screen w-1/3 p-5 border-r border-gray-300">
       <SearchBar />
-      <FilterList />
       <Stories />
-      <ChatList />
+      <ChannelList
+        filters={{ type: "messaging" }}
+        sort={{ last_message_at: -1 }}
+        options={{ limit: 30 }}
+        List={(props) => {
+          console.log(props);
+          return <ChatList {...props} type="messaging" />;
+        }}
+        Preview={(props) => {
+          console.log(props);
+          return <ChatElement {...props} onSelect={onSelect} />;
+        }}
+      />
     </div>
   );
 };
