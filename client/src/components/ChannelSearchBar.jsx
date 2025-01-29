@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useChatContext } from "stream-chat-react";
 import { IoMdAdd } from "react-icons/io";
 import { CiSearch } from "react-icons/ci";
+import Modal from "./UI/Modal";
+import GenericList from "./GenericList";
 
-const ChannelSearchBar = () => {
+const ChannelSearchBar = ({ list }) => {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [openList, setOpenList] = useState(false);
   const getChannels = () => {
     try {
       //Code to get channel list
@@ -35,7 +37,17 @@ const ChannelSearchBar = () => {
           <CiSearch />
         </button>
       </form>
-      <button className="bg-indigo-500 p-3 rounded-lg text-xl text-white">
+      <Modal isOpen={openList} onClose={() => setOpenList(false)}>
+        <GenericList
+          list={list}
+          type={"team"}
+          onClose={() => setOpenList(false)}
+        />
+      </Modal>
+      <button
+        className="bg-indigo-500 p-3 rounded-lg text-xl text-white"
+        onClick={() => setOpenList(true)}
+      >
         <IoMdAdd />
       </button>
     </div>

@@ -17,10 +17,8 @@ const SearchBar = () => {
       try {
         const response = await client.queryUsers(
           { role: "user" },
-          { id: 1 },
           { limit: 30 }
         );
-        console.log(response.users);
         setUsersList(response.users);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -73,7 +71,6 @@ const SearchBar = () => {
 // };
 const StoryElement = ({ name, img }) => {
   const imageUrl = require(`../img/${img}`);
-  console.log(imageUrl);
   return (
     <div className="h-full mt-5 flex flex-col items-center gap-1">
       <div
@@ -106,7 +103,6 @@ const Stories = () => {
   const [selectedStory, setSelectedStory] = useState(null);
 
   const openModal = (story) => {
-    console.log("here");
     setSelectedStory(story); // Set the selected story to display in the modal
   };
 
@@ -153,16 +149,16 @@ const Stories = () => {
 };
 
 const ChatListMenu = ({ onSelect }) => {
+  const { client } = useChatContext();
   return (
     <div className="h-screen w-1/3 p-5 border-r border-gray-300">
       <SearchBar />
       <Stories />
       <ChannelList
-        filters={{ type: "messaging" }}
+        filters={{ type: "messaging", members: { $in: [client.userID] } }}
+        options={{ state: true, watch: true, presence: true }}
         sort={{ last_message_at: -1 }}
-        options={{ limit: 30 }}
         List={(props) => {
-          console.log(props);
           return <ChatList {...props} type="messaging" />;
         }}
         Preview={(props) => {

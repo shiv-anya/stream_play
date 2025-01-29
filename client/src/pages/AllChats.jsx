@@ -9,7 +9,6 @@ const AllChats = () => {
   const [infoMenuOpen, setInfoMenuOpen] = useState(false);
   const { client } = useChatContext();
   const handleClick = (channel) => {
-    console.log(channel);
     setSelectedChannel(channel);
   };
   const openInfo = () => {

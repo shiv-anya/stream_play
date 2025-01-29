@@ -1,7 +1,7 @@
 import React from "react";
+import { InfinitySpin } from "react-loader-spinner";
 
 const ChatList = ({ children, error = false, loading, type }) => {
-  // h-[40%] mt-16
   if (error) {
     return (
       <p className="text-center mt-5">Connection Error. Try again later...</p>
@@ -9,9 +9,14 @@ const ChatList = ({ children, error = false, loading, type }) => {
   }
   if (loading) {
     return (
-      <p className="text-center mt-5">
-        {`${(type = "team" ? "Channels" : "Direct Messages")}`} loading...
-      </p>
+      <div className="w-full h-[70%] flex justify-center items-center">
+        <InfinitySpin
+          visible={true}
+          width="200"
+          color="#6366f1"
+          ariaLabel="infinity-spin-loading"
+        />
+      </div>
     );
   }
   return (
@@ -20,7 +25,7 @@ const ChatList = ({ children, error = false, loading, type }) => {
         {type === "team" ? "Channel Chats" : "Direct Messages"}
       </h2>
       <div className="h-full">
-        <ul className="h-full overflow-hidden hover:overflow-y-scroll flex flex-col gap-2 scrollbar-thin scrollbar-thumb-indigo-500 px-1">
+        <ul className="h-full overflow-hidden hover:overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500 px-1">
           {children}
         </ul>
       </div>

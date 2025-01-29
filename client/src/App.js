@@ -5,7 +5,6 @@ import Cookies from "universal-cookie";
 import { Login } from "./components";
 import { AllChats, AllChannels } from "./pages";
 import { Route, Routes } from "react-router";
-import { CustomClasses } from "stream-chat-react";
 
 const cookies = new Cookies();
 
@@ -32,7 +31,7 @@ function App() {
   const customClasses = {
     chatContainer: "h-screen",
     channel: "w-full h-full flex flex-col",
-    channelList: "h-[80%] border-none",
+    channelList: `h-[80%] border-none`,
     messageList:
       "w-full px-5 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500",
   };

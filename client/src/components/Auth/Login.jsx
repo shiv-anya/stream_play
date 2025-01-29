@@ -12,6 +12,7 @@ import { MdFacebook } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { FaArrowRight } from "react-icons/fa6";
 import { useNavigate } from "react-router";
+import { Oval } from "react-loader-spinner";
 
 const cookies = new Cookies();
 
@@ -27,6 +28,7 @@ const FormDiv = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState(initialState);
   const [isSignUp, setIsSignUp] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const toggleSignUp = () => {
     setIsSignUp((prevIsSignUp) => !prevIsSignUp);
   };
@@ -35,8 +37,8 @@ const FormDiv = () => {
   };
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const { fullName, username, email, password } = form;
-    console.log(form);
     const BASE_URL =
       process.env.NODE_ENV === "development"
         ? "http://localhost:3001"
@@ -50,7 +52,6 @@ const FormDiv = () => {
       email,
       password,
     });
-    console.log(username + " " + token + " " + email + " " + hashedPassword);
     cookies.set("token", token);
     cookies.set("username", username);
     cookies.set("fullName", fullName);
@@ -59,6 +60,7 @@ const FormDiv = () => {
       cookies.set("hashedPassword", hashedPassword);
       cookies.set("email", email);
     }
+    setIsLoading(false);
     navigate("/chats");
     window.location.reload();
   };
@@ -202,9 +204,21 @@ const FormDiv = () => {
           <div className="flex w-full justify-between items-center">
             <button className="bg-indigo-500 text-white flex items-center py-2 px-7 gap-4 rounded-3xl hover:bg-indigo-700 transition duration-300 ease-in-out">
               {isSignUp ? "Sign Up" : "Sign In"}
-              <span className="bg-[rgba(255,255,255,0.5)] rounded-full p-2 text-white">
-                <FaArrowRight />
-              </span>
+              {isLoading ? (
+                <Oval
+                  visible={true}
+                  height="20"
+                  width="20"
+                  color="#f3f3f3"
+                  ariaLabel="oval-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              ) : (
+                <span className="bg-[rgba(255,255,255,0.5)] rounded-full p-2 text-white">
+                  <FaArrowRight />
+                </span>
+              )}
             </button>
             <p className="text-gray-500">Or</p>
             <div className="flex items-center text-2xl gap-4">

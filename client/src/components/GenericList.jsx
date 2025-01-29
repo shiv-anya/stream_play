@@ -1,13 +1,28 @@
 import React from "react";
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router";
+import { useChatContext } from "stream-chat-react";
 
 const GenericList = ({ list, type, onClose }) => {
+  console.log(list);
+  const { client } = useChatContext();
   const navigate = useNavigate();
   const handleUserClick = (userId) => {
     navigate(`/chats?user=${userId}`);
+    onClose();
   };
-  console.log(list);
+  const handleChannelClick = async (channel) => {
+    try {
+      if (!channel.state.members[client.user.id]) {
+        await channel.addMembers([client.user.id]);
+      }
+      navigate(`/channels/${channel.id}`);
+      onClose();
+    } catch (error) {
+      console.error("Error joining or opening the channel:", error);
+    }
+  };
+
   return (
     <div className="bg-white w-1/3 h-screen">
       <div className="bg-indigo-500 h-[10%] w-full text-white flex justify-between items-center p-5 text-lg font-semibold">
@@ -16,7 +31,7 @@ const GenericList = ({ list, type, onClose }) => {
           <FaTimes />
         </button>
       </div>
-      <ul className="w-full">
+      <ul className="h-[90%] w-full scrollbar-thin scrollbar-thumb-indigo-500 overflow-y-scroll">
         {list.map((user) => (
           <li
             key={user.id}
@@ -28,14 +43,18 @@ const GenericList = ({ list, type, onClose }) => {
               )}
             </div>
             <div className="w-[50%] flex flex-col justify-center">
-              <p>{user.name}</p>
+              <p>{type === "messaging" ? user.name : user.data.name}</p>
               <p className="text-xs">Hey there!</p>
             </div>
             <button
               className="text-sm border border-indigo-500 rounded-full px-5 py-2 hover:bg-indigo-500 hover:text-white"
-              onClick={() => handleUserClick(user.id)}
+              onClick={() => {
+                type === "messaging"
+                  ? handleUserClick(user.id)
+                  : handleChannelClick(user);
+              }}
             >
-              Message
+              {type === "messaging" ? "Message" : "Follow"}
             </button>
           </li>
         ))}

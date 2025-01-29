@@ -10,7 +10,6 @@ const AllChannels = () => {
     setInfoMenuOpen(!infoMenuOpen);
   };
   const handleClick = (channel) => {
-    console.log(channel);
     setSelectedChannel(channel);
   };
   return (
