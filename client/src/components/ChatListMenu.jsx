@@ -155,14 +155,18 @@ const ChatListMenu = ({ onSelect }) => {
       <SearchBar />
       <Stories />
       <ChannelList
-        filters={{ type: "messaging", members: { $in: [client.userID] } }}
+        filters={{
+          type: "messaging",
+          members: { $in: [client.userID] },
+          disabled: false,
+        }}
         options={{ state: true, watch: true, presence: true }}
         sort={{ last_message_at: -1 }}
         List={(props) => {
           return <ChatList {...props} type="messaging" />;
         }}
         Preview={(props) => {
-          console.log(props);
+          // console.log(props);
           return <ChatElement {...props} onSelect={onSelect} />;
         }}
       />

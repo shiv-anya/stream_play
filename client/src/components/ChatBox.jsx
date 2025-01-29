@@ -8,8 +8,8 @@ const ChatBox = ({ openInfo, channel }) => {
   return (
     <div className="w-2/3 h-screen">
       <Channel channel={channel} EmojiPicker={EmojiPicker}>
-        <ChatBoxTopBar channel={channel} openInfo={openInfo} />
-        <ChatBoxMiddle channel={channel} />
+        <ChatBoxTopBar openInfo={openInfo} />
+        <ChatBoxMiddle />
       </Channel>
     </div>
   );
