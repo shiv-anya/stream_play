@@ -29,8 +29,8 @@ if (authToken) {
 
 function App() {
   const customClasses = {
-    chatContainer: "h-screen",
-    channel: "w-full h-full flex flex-col",
+    chatContainer: "h-screen w-full",
+    channel: "w-2/3 h-screen flex",
     channelList: `h-[80%] border-none`,
     messageList:
       "w-full px-5 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500",

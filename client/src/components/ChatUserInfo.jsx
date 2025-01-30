@@ -2,6 +2,7 @@ import React from "react";
 import { IoIosCall } from "react-icons/io";
 import { IoVideocam } from "react-icons/io5";
 import { MdArrowForwardIos } from "react-icons/md";
+import { useChannelStateContext, useChatContext } from "stream-chat-react";
 import Image1 from "../img/img-1.jpg";
 import Image2 from "../img/img-2.jpg";
 import Image3 from "../img/img-3.jpg";
@@ -12,15 +13,25 @@ import Image7 from "../img/img-7.jpg";
 import Image8 from "../img/img-8.jpg";
 import Image9 from "../img/img-9.jpg";
 
-const TopInfo = () => {
+const TopInfo = ({ name, status, email, type, title, memberCount }) => {
   return (
     <div className="w-full">
       <div className="flex flex-col items-center gap-3">
         <div className="flex flex-col items-center gap-2">
           <div className="size-16 bg-[url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400')] bg-center bg-cover rounded-full"></div>
           <div className="flex flex-col items-center">
-            <span className="text-lg font-semibold">Sophia Johnson</span>
-            <span className="text-xs font-semibold text-gray-400">online</span>
+            <span className="text-lg font-semibold">
+              {type === "messaging" ? name : title}
+            </span>
+            <span className="text-xs font-semibold text-gray-400">
+              {type == "messaging"
+                ? status
+                  ? "online"
+                  : "offline"
+                : memberCount > 1
+                ? `${memberCount} members`
+                : "1 member"}
+            </span>
           </div>
         </div>
         <div className="flex gap-2 items-center">
@@ -33,12 +44,12 @@ const TopInfo = () => {
         </div>
       </div>
       <div className="flex flex-col gap-2 mt-5">
-        <div className="flex flex-col bg-gray-100 p-4 rounded-xl">
-          <span className="text-xs font-semibold text-gray-400">Email</span>
-          <span className="text-sm font-semibold text-gray-700">
-            +91 888 888 888
-          </span>
-        </div>
+        {email && (
+          <div className="flex flex-col bg-gray-100 p-4 rounded-xl">
+            <span className="text-xs font-semibold text-gray-400">Email</span>
+            <span className="text-sm font-semibold text-gray-700">{email}</span>
+          </div>
+        )}
         <div className="flex flex-col bg-gray-100 p-4 rounded-xl w-full">
           <span className="text-xs font-semibold text-gray-400">About me</span>
           <p className="whitespace-nowrap text-sm font-semibold text-gray-700 overflow-hidden hover:overflow-x-scroll scrollbar-thin scrollbar-thumb-indigo-500 pb-2">
@@ -83,33 +94,48 @@ const MediaMenu = () => {
           </li>
         </ul>
       </div>
-      <div class="grid grid-cols-3 gap-2 mt-5">
-        <img src={Image1} alt="Media 1" class="rounded-tl-lg w-full h-16" />
+      <div className="grid grid-cols-3 gap-2 mt-5">
+        <img src={Image1} alt="Media 1" className="rounded-tl-lg w-full h-16" />
 
-        <img src={Image2} alt="Media 2" class="w-full h-16" />
+        <img src={Image2} alt="Media 2" className="w-full h-16" />
 
-        <img src={Image3} alt="Media 3" class="rounded-tr-lg w-full h-16" />
+        <img src={Image3} alt="Media 3" className="rounded-tr-lg w-full h-16" />
 
-        <img src={Image4} alt="Media 4" class="w-full h-16" />
+        <img src={Image4} alt="Media 4" className="w-full h-16" />
 
-        <img src={Image5} alt="Media 5" class="w-full h-16" />
+        <img src={Image5} alt="Media 5" className="w-full h-16" />
 
-        <img src={Image6} alt="Media 6" class="w-full h-16" />
+        <img src={Image6} alt="Media 6" className="w-full h-16" />
 
-        <img src={Image7} alt="Media 7" class="rounded-bl-lg w-full h-16" />
+        <img src={Image7} alt="Media 7" className="rounded-bl-lg w-full h-16" />
 
-        <img src={Image8} alt="Media 8" class="w-full h-16" />
+        <img src={Image8} alt="Media 8" className="w-full h-16" />
 
-        <img src={Image9} alt="Media 9" class="rounded-br-lg w-full h-16" />
+        <img src={Image9} alt="Media 9" className="rounded-br-lg w-full h-16" />
       </div>
     </div>
   );
 };
 
 const ChatUserInfo = () => {
+  const { channel } = useChannelStateContext();
+  const { client } = useChatContext();
+  const type = channel?.type;
+  const members = Object.values(channel?.state?.members);
+  const otherUser = members.find((member) => member.user.id !== client.userID);
+  console.log(channel.type);
+  console.log(members);
+  console.log(otherUser?.user?.online);
   return (
-    <aside className="h-screen w-1/4 p-4 pt-8 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500">
-      <TopInfo />
+    <aside className="h-screen w-[40%] p-4 pt-8 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500">
+      <TopInfo
+        name={otherUser?.user?.name}
+        status={otherUser?.user?.online}
+        email={otherUser?.user?.email}
+        title={channel?.data?.name}
+        memberCount={channel?.data?.member_count}
+        type={type}
+      />
       <MediaMenu />
     </aside>
   );

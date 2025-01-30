@@ -40,8 +40,12 @@ const AllChats = () => {
     <Layout>
       <div className="flex">
         <ChatListMenu onSelect={handleClick} />
-        <ChatBox openInfo={openInfo} channel={selectedChannel} />
-        {infoMenuOpen && <ChatUserInfo />}
+        <ChatBox
+          openInfo={openInfo}
+          open={infoMenuOpen}
+          channel={selectedChannel}
+        />
+        {/* {infoMenuOpen && <ChatUserInfo channel={selectedChannel} />} */}
       </div>
     </Layout>
   );
