@@ -31,7 +31,7 @@ const ChatBoxMiddle = () => {
     .filter((user) => user.user?.name)
     .map((user) => user.user.name);
   return (
-    <div className="flex w-full h-[85%] bg-green-300">
+    <div className="flex w-full h-[85%] bg-gray-400">
       <div className="w-full h-full flex flex-col bg-[url('./img/wallpaper.jpg')]">
         <MessageList Message={CustomMessage} />
         <div className="text-xs p-5 pt-0">
