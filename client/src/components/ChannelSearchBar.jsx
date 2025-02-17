@@ -11,7 +11,6 @@ const ChannelSearchBar = ({ list }) => {
   const [openList, setOpenList] = useState(false);
   const getChannels = () => {
     try {
-      //Code to get channel list
     } catch (e) {
       setQuery("");
     }

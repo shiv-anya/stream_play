@@ -5,6 +5,7 @@ import Cookies from "universal-cookie";
 import { Login } from "./components";
 import { AllChats, AllChannels } from "./pages";
 import { Route, Routes } from "react-router";
+import { useLocation } from "react-router";
 
 const cookies = new Cookies();
 
@@ -28,10 +29,13 @@ if (authToken) {
 }
 
 function App() {
+  const location = useLocation();
   const customClasses = {
     chatContainer: "h-screen w-full",
     channel: "w-2/3 h-screen flex",
-    channelList: `h-[80%] border-none`,
+    channelList: `${
+      location.pathname === "/chats" ? "h-[40%]" : "h-[80%]"
+    } border-none`,
     messageList:
       "w-full px-5 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500",
   };

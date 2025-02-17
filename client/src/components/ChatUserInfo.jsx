@@ -1,17 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoIosCall } from "react-icons/io";
 import { IoVideocam } from "react-icons/io5";
 import { MdArrowForwardIos } from "react-icons/md";
 import { useChannelStateContext, useChatContext } from "stream-chat-react";
-import Image1 from "../img/img-1.jpg";
-import Image2 from "../img/img-2.jpg";
-import Image3 from "../img/img-3.jpg";
-import Image4 from "../img/img-4.jpg";
-import Image5 from "../img/img-5.jpg";
-import Image6 from "../img/img-6.jpg";
-import Image7 from "../img/img-7.jpg";
-import Image8 from "../img/img-8.jpg";
-import Image9 from "../img/img-9.jpg";
+import { FaFileAudio, FaFilePdf, FaFileVideo } from "react-icons/fa";
+import { useNavigate } from "react-router";
 
 const TopInfo = ({ name, status, email, type, title, memberCount }) => {
   return (
@@ -24,7 +17,7 @@ const TopInfo = ({ name, status, email, type, title, memberCount }) => {
               {type === "messaging" ? name : title}
             </span>
             <span className="text-xs font-semibold text-gray-400">
-              {type == "messaging"
+              {type === "messaging"
                 ? status
                   ? "online"
                   : "offline"
@@ -61,71 +54,116 @@ const TopInfo = ({ name, status, email, type, title, memberCount }) => {
   );
 };
 
-const MediaMenu = () => {
+const MediaMenu = ({ mediaMessages, members, id }) => {
+  const [mediaMenuActive, setMediaMenuActive] = useState(true);
+  const navigate = useNavigate();
+  const getFileIcon = (type, attachment) => {
+    if (type.startsWith("image") || type.startsWith("giphy"))
+      return (
+        <img
+          key={Math.random() * 1000}
+          src={attachment.image_url || attachment.thumb_url}
+          alt="Shared media"
+          className="w-full h-full rounded-lg"
+        />
+      );
+    if (type.startsWith("video"))
+      return <FaFileVideo className="size-8 text-indigo-500" />;
+    if (type.startsWith("voice"))
+      return <FaFileAudio className="size-8 text-indigo-500" />;
+    return <FaFilePdf className="size-8 text-indigo-500" />;
+  };
+  const handleUserClick = (userId) => {
+    navigate(`/chats?user=${userId}`);
+  };
   return (
     <div className="pt-5">
       <div className="flex justify-between items-center">
-        <h2 className="font-semibold">Shared Media</h2>
+        <h2 className="font-semibold">Channel Data</h2>
         <button className="text-xs text-gray-500">
           <MdArrowForwardIos />
         </button>
       </div>
       <div className="mt-2">
         <ul className="flex text-xs overflow-hidden gap-4">
-          <li>
+          <li
+            className="cursor-pointer"
+            onClick={() => setMediaMenuActive(true)}
+          >
             <span>Media</span>
-            <div className="rounded-lg h-1 mt-1 bg-indigo-200"></div>
+            {mediaMenuActive && (
+              <div className="rounded-lg h-1 mt-1 bg-indigo-200"></div>
+            )}
           </li>
-          <li>
-            <span>Docs</span>
-            <div></div>
-          </li>
-          <li>
-            <span>Audio</span>
-            <div></div>
-          </li>
-          <li>
-            <span>Links</span>
-            <div></div>
-          </li>
-          <li>
-            <span>Voice</span>
-            <div></div>
+          <li
+            className="cursor-pointer"
+            onClick={() => setMediaMenuActive(false)}
+          >
+            <span>Members</span>
+            {!mediaMenuActive && (
+              <div className="rounded-lg h-1 mt-1 bg-indigo-200"></div>
+            )}
           </li>
         </ul>
       </div>
       <div className="grid grid-cols-3 gap-2 mt-5">
-        <img src={Image1} alt="Media 1" className="rounded-tl-lg w-full h-16" />
-
-        <img src={Image2} alt="Media 2" className="w-full h-16" />
-
-        <img src={Image3} alt="Media 3" className="rounded-tr-lg w-full h-16" />
-
-        <img src={Image4} alt="Media 4" className="w-full h-16" />
-
-        <img src={Image5} alt="Media 5" className="w-full h-16" />
-
-        <img src={Image6} alt="Media 6" className="w-full h-16" />
-
-        <img src={Image7} alt="Media 7" className="rounded-bl-lg w-full h-16" />
-
-        <img src={Image8} alt="Media 8" className="w-full h-16" />
-
-        <img src={Image9} alt="Media 9" className="rounded-br-lg w-full h-16" />
+        {mediaMenuActive &&
+          mediaMessages.map((msg) =>
+            msg.attachments.map((attachment, index) => (
+              <div
+                className="flex justify-center items-center"
+                key={attachment.id}
+              >
+                <a
+                  href={
+                    attachment.image_url ||
+                    attachment.thumb_url ||
+                    attachment.asset_url
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {getFileIcon(attachment.type, attachment)}
+                </a>
+              </div>
+            ))
+          )}
       </div>
+      {!mediaMenuActive && members.length > 0 && (
+        <ul className="w-full">
+          {members.map((user) => (
+            <li
+              key={user.user.id}
+              className="w-full p-2 flex justify-between items-center border-b gap-4"
+            >
+              <div className="text-sm">
+                <p>{user.user.name}</p>
+              </div>
+              {id !== user.user.id && (
+                <button
+                  className="text-xs border border-indigo-500 rounded-full px-2 py-1 hover:bg-indigo-500 hover:text-white"
+                  onClick={() => {
+                    handleUserClick(user.id);
+                  }}
+                >
+                  Message
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
 const ChatUserInfo = () => {
-  const { channel } = useChannelStateContext();
+  const { channel, messages } = useChannelStateContext();
   const { client } = useChatContext();
   const type = channel?.type;
   const members = Object.values(channel?.state?.members);
   const otherUser = members.find((member) => member.user.id !== client.userID);
-  console.log(channel.type);
-  console.log(members);
-  console.log(otherUser?.user?.online);
+  const mediaMessages = messages.filter((msg) => msg.attachments?.length > 0);
   return (
     <aside className="h-screen w-[40%] p-4 pt-8 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500">
       <TopInfo
@@ -136,7 +174,11 @@ const ChatUserInfo = () => {
         memberCount={channel?.data?.member_count}
         type={type}
       />
-      <MediaMenu />
+      <MediaMenu
+        mediaMessages={mediaMessages}
+        members={members}
+        id={client.userID}
+      />
     </aside>
   );
 };

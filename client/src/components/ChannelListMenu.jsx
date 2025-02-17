@@ -3,7 +3,7 @@ import { ChannelList, useChatContext } from "stream-chat-react";
 import Cookies from "universal-cookie";
 import { ChannelSearchBar, ChatElement, ChatList } from "./";
 
-const ChannelListMenu = ({ onSelect }) => {
+const ChannelListMenu = ({ onSelect, id }) => {
   const { client } = useChatContext();
   const [channels, setChannels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,9 +11,8 @@ const ChannelListMenu = ({ onSelect }) => {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        // Query for all channels
-        const filters = { type: "team", is_public: true }; // Empty filters to get all channels
-        const sort = { created_at: -1 }; // Sort channels by last message
+        const filters = { type: "team", is_public: true };
+        const sort = { created_at: -1 };
         const channelList = await client.queryChannels(filters, sort);
         setChannels(channelList);
       } catch (error) {
@@ -38,7 +37,7 @@ const ChannelListMenu = ({ onSelect }) => {
             return <ChatList {...props} type="team" />;
           }}
           Preview={(props) => {
-            return <ChatElement {...props} onSelect={onSelect} />;
+            return <ChatElement {...props} onSelect={onSelect} id={id} />;
           }}
         />
       </div>

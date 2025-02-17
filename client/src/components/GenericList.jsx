@@ -4,7 +4,6 @@ import { useNavigate } from "react-router";
 import { useChatContext } from "stream-chat-react";
 
 const GenericList = ({ list, type, onClose }) => {
-  console.log(list);
   const { client } = useChatContext();
   const navigate = useNavigate();
   const handleUserClick = (userId) => {

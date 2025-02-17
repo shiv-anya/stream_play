@@ -7,7 +7,6 @@ import ChatUserInfo from "./ChatUserInfo";
 
 const ChatBox = ({ openInfo, open, channel }) => {
   return (
-    // <div className="">
     <Channel channel={channel} EmojiPicker={EmojiPicker}>
       <div className="flex h-full">
         <div className="w-full flex flex-col h-full">
@@ -17,7 +16,6 @@ const ChatBox = ({ openInfo, open, channel }) => {
         {open && <ChatUserInfo />}
       </div>
     </Channel>
-    // </div>
   );
 };
 

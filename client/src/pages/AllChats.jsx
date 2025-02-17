@@ -6,10 +6,12 @@ import { useChatContext } from "stream-chat-react";
 
 const AllChats = () => {
   const [selectedChannel, setSelectedChannel] = useState(null);
+  const [activeChannelId, setActiveChannelId] = useState(null);
   const [infoMenuOpen, setInfoMenuOpen] = useState(false);
   const { client } = useChatContext();
   const handleClick = (channel) => {
     setSelectedChannel(channel);
+    setActiveChannelId(channel.id);
   };
   const openInfo = () => {
     setInfoMenuOpen(!infoMenuOpen);
@@ -17,7 +19,6 @@ const AllChats = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const userId = searchParams.get("user");
-  console.log(client);
   useEffect(() => {
     if (userId) {
       // Check if a channel exists between the current user and selected user
@@ -39,7 +40,7 @@ const AllChats = () => {
   return (
     <Layout>
       <div className="flex">
-        <ChatListMenu onSelect={handleClick} />
+        <ChatListMenu onSelect={handleClick} id={activeChannelId} />
         <ChatBox
           openInfo={openInfo}
           open={infoMenuOpen}

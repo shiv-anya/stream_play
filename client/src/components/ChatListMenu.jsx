@@ -55,20 +55,6 @@ const SearchBar = () => {
   );
 };
 
-// const FilterList = () => {
-//   return (
-//     <ul className="text-xs flex gap-4 my-5">
-//       <li className="flex flex-col items-center gap-1">
-//         <button>All</button>
-//         <div className="rounded-full bg-indigo-500 size-1"></div>
-//       </li>
-//       <li className="flex flex-col items-center gap-1">
-//         <button>Direct</button>
-//         <div className="rounded-full bg-indigo-500 size-1"></div>
-//       </li>
-//     </ul>
-//   );
-// };
 const StoryElement = ({ name, img }) => {
   const imageUrl = require(`../img/${img}`);
   return (
@@ -103,11 +89,11 @@ const Stories = () => {
   const [selectedStory, setSelectedStory] = useState(null);
 
   const openModal = (story) => {
-    setSelectedStory(story); // Set the selected story to display in the modal
+    setSelectedStory(story);
   };
 
   const closeModal = () => {
-    setSelectedStory(null); // Reset selected story to close the modal
+    setSelectedStory(null);
   };
   return (
     <div className="w-full h-[20%] mb-16 my-5">
@@ -148,7 +134,7 @@ const Stories = () => {
   );
 };
 
-const ChatListMenu = ({ onSelect }) => {
+const ChatListMenu = ({ onSelect, id }) => {
   const { client } = useChatContext();
   return (
     <div className="h-screen w-1/3 p-5 border-r border-gray-300">
@@ -166,8 +152,7 @@ const ChatListMenu = ({ onSelect }) => {
           return <ChatList {...props} type="messaging" />;
         }}
         Preview={(props) => {
-          // console.log(props);
-          return <ChatElement {...props} onSelect={onSelect} />;
+          return <ChatElement {...props} onSelect={onSelect} id={id} />;
         }}
       />
     </div>

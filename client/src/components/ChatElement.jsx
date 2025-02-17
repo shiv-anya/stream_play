@@ -13,6 +13,7 @@ const ChatElement = ({
   lastMessage,
   onSelect,
   channel,
+  id,
   isTyping,
 }) => {
   const formatFriendlyDate = (dateString) => {
@@ -48,7 +49,9 @@ const ChatElement = ({
   } else if (messageDeliveryStatus === "read") deliveryIcon = <MdDoneAll />;
   return (
     <div
-      className="w-full h-[80px] rounded-lg hover:bg-gray-200 flex justify-between p-3 items-center"
+      className={`w-full h-[80px] rounded-lg hover:bg-gray-200 flex justify-between py-2 px-3 my-2 items-center ${
+        id === channel.data.id ? "bg-gray-200" : ""
+      }`}
       onClick={() => onSelect(channel)}
     >
       {displayImage ? (
