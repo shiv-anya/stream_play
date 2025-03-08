@@ -2,6 +2,7 @@ import React from "react";
 import { InfinitySpin } from "react-loader-spinner";
 
 const ChatList = ({ children, error = false, loading, type }) => {
+  
   if (error) {
     return (
       <p className="text-center mt-5">Connection Error. Try again later...</p>

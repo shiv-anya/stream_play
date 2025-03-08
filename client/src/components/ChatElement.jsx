@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   MdCheckCircleOutline,
   MdDoneAll,
   MdErrorOutline,
 } from "react-icons/md";
+import ThemeContext from "../ctx/ThemeContext";
 
 const ChatElement = ({
   latestMessage,
@@ -16,6 +17,7 @@ const ChatElement = ({
   id,
   isTyping,
 }) => {
+  const { darkTheme } = useContext(ThemeContext);
   const formatFriendlyDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -50,8 +52,15 @@ const ChatElement = ({
   return (
     <div
       className={`w-full h-[80px] rounded-lg hover:bg-gray-200 flex justify-between py-2 px-3 my-2 items-center ${
-        id === channel.data.id ? "bg-gray-200" : ""
-      }`}
+        darkTheme && "hover:bg-gray-700"
+      } ${
+        id === channel.data.id
+          ? darkTheme
+            ? "bg-[#333333]"
+            : "bg-gray-200"
+          : ""
+      }
+  `}
       onClick={() => onSelect(channel)}
     >
       {displayImage ? (
@@ -68,16 +77,20 @@ const ChatElement = ({
       )}
       <div className="w-[80%] flex flex-col gap-1">
         <div className="w-full flex flex-row justify-between items-center">
-          <h3 className="text-base font-normal">{displayTitle}</h3>
-          <span className="text-xs">
+          <h3 className="text-base font-normal capitalize">{displayTitle}</h3>
+          <span className={`text-xs ${darkTheme && "text-gray-500"}`}>
             {lastMessage?.created_at
               ? formatFriendlyDate(lastMessage?.created_at)
               : ""}
           </span>
         </div>
-        <div className="flex flex-row gap-2 items-center text-gray-700">
+        <div
+          className={`flex flex-row gap-2 items-center ${
+            darkTheme ? "text-gray-500" : "text-gray-700"
+          }`}
+        >
           <span className="text-xs">{deliveryIcon}</span>
-          <p className="text-xs">{isTyping ? "Typing..." : latestMessage}</p>
+          <p className={`text-xs`}>{isTyping ? "Typing..." : latestMessage}</p>
         </div>
       </div>
     </div>

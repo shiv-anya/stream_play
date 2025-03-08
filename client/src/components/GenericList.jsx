@@ -2,9 +2,12 @@ import React from "react";
 import { FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { useChatContext } from "stream-chat-react";
+import ThemeContext from "../ctx/ThemeContext";
+import { useContext } from "react";
 
 const GenericList = ({ list, type, onClose }) => {
   const { client } = useChatContext();
+  const { darkTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const handleUserClick = (userId) => {
     navigate(`/chats?user=${userId}`);
@@ -23,7 +26,11 @@ const GenericList = ({ list, type, onClose }) => {
   };
 
   return (
-    <div className="bg-white w-1/3 h-screen">
+    <div
+      className={`${
+        darkTheme ? "bg-[#23272a] text-gray-300" : "bg-white"
+      } w-1/3 h-screen`}
+    >
       <div className="bg-indigo-500 h-[10%] w-full text-white flex justify-between items-center p-5 text-lg font-semibold">
         <h1>{type === "messaging" ? "All Users" : "All Channels"}</h1>
         <button onClick={onClose} className="flex items-center">

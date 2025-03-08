@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { IoIosCall } from "react-icons/io";
 import { IoVideocam } from "react-icons/io5";
 import { MdArrowForwardIos } from "react-icons/md";
 import { useChannelStateContext, useChatContext } from "stream-chat-react";
 import { FaFileAudio, FaFilePdf, FaFileVideo } from "react-icons/fa";
 import { useNavigate } from "react-router";
+import ThemeContext from "../ctx/ThemeContext";
 
-const TopInfo = ({ name, status, email, type, title, memberCount }) => {
+const TopInfo = ({
+  name,
+  status,
+  email,
+  type,
+  title,
+  memberCount,
+  darkTheme,
+}) => {
   return (
     <div className="w-full">
       <div className="flex flex-col items-center gap-3">
@@ -28,24 +37,50 @@ const TopInfo = ({ name, status, email, type, title, memberCount }) => {
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          <button className="p-2 text-2xl bg-gray-200 hover:bg-gray-300 text-gray-400 rounded-full">
+          <button
+            className={`p-2 text-2xl bg-gray-200 hover:bg-gray-300 text-gray-400 rounded-full ${
+              darkTheme && "bg-gray-700 hover:bg-indigo-500 hover:text-white"
+            }`}
+          >
             <IoIosCall />
           </button>
-          <button className="p-2 text-2xl bg-gray-200 hover:bg-gray-300 text-gray-400 rounded-full">
+          <button
+            className={`p-2 text-2xl bg-gray-200 hover:bg-gray-300 text-gray-400 rounded-full ${
+              darkTheme && "bg-gray-700 hover:bg-indigo-500 hover:text-white"
+            }`}
+          >
             <IoVideocam />
           </button>
         </div>
       </div>
       <div className="flex flex-col gap-2 mt-5">
         {email && (
-          <div className="flex flex-col bg-gray-100 p-4 rounded-xl">
+          <div
+            className={`flex flex-col bg-gray-100 p-4 rounded-xl ${
+              darkTheme && "bg-gray-700"
+            }`}
+          >
             <span className="text-xs font-semibold text-gray-400">Email</span>
-            <span className="text-sm font-semibold text-gray-700">{email}</span>
+            <span
+              className={`text-sm font-semibold ${
+                darkTheme ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              {email}
+            </span>
           </div>
         )}
-        <div className="flex flex-col bg-gray-100 p-4 rounded-xl w-full">
+        <div
+          className={`flex flex-col bg-gray-100 p-4 rounded-xl w-full ${
+            darkTheme && "bg-gray-700"
+          }`}
+        >
           <span className="text-xs font-semibold text-gray-400">About me</span>
-          <p className="whitespace-nowrap text-sm font-semibold text-gray-700 overflow-hidden hover:overflow-x-scroll scrollbar-thin scrollbar-thumb-indigo-500 pb-2">
+          <p
+            className={`whitespace-nowrap text-sm font-semibold overflow-hidden hover:overflow-x-scroll scrollbar-thin scrollbar-thumb-indigo-500 pb-2 ${
+              darkTheme ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
             The less you know the better #idkwhattowritelol.
           </p>
         </div>
@@ -160,12 +195,17 @@ const MediaMenu = ({ mediaMessages, members, id }) => {
 const ChatUserInfo = () => {
   const { channel, messages } = useChannelStateContext();
   const { client } = useChatContext();
+  const { darkTheme } = useContext(ThemeContext);
   const type = channel?.type;
   const members = Object.values(channel?.state?.members);
   const otherUser = members.find((member) => member.user.id !== client.userID);
   const mediaMessages = messages.filter((msg) => msg.attachments?.length > 0);
   return (
-    <aside className="h-screen w-[40%] p-4 pt-8 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500">
+    <aside
+      className={`h-screen w-[40%] p-4 pt-8 overflow-y-scroll scrollbar-thin scrollbar-thumb-indigo-500 ${
+        darkTheme && "bg-[#23272a] text-gray-300"
+      }`}
+    >
       <TopInfo
         name={otherUser?.user?.name}
         status={otherUser?.user?.online}
@@ -173,8 +213,10 @@ const ChatUserInfo = () => {
         title={channel?.data?.name}
         memberCount={channel?.data?.member_count}
         type={type}
+        darkTheme={darkTheme}
       />
       <MediaMenu
+        darkTheme={darkTheme}
         mediaMessages={mediaMessages}
         members={members}
         id={client.userID}

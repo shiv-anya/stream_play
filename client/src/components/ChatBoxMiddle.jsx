@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   MessageList,
   MessageInput,
@@ -8,6 +8,7 @@ import {
   MessageSimple,
 } from "stream-chat-react";
 import "stream-chat-react/dist/css/v2/index.css";
+import ThemeContext from "../ctx/ThemeContext";
 
 const CustomMessage = (props) => {
   return <MessageSimple {...props} reactionSelector />;
@@ -27,12 +28,19 @@ const CustomMessageInput = () => {
 const ChatBoxMiddle = () => {
   const { thread } = useChannelStateContext();
   const { typing } = useTypingContext();
+  const { darkTheme } = useContext(ThemeContext);
   const typingUsers = Object.values(typing)
     .filter((user) => user.user?.name)
     .map((user) => user.user.name);
   return (
     <div className="flex w-full h-[85%] bg-gray-400">
-      <div className="w-full h-full flex flex-col bg-[url('./img/wallpaper.jpg')]">
+      <div
+        className={`w-full h-full flex flex-col ${
+          darkTheme
+            ? "bg-[url('./img/bg-dark2.jpg')]"
+            : "bg-[url('./img/wallpaper.jpg')]"
+        }`}
+      >
         <MessageList Message={CustomMessage} />
         <div className="text-xs p-5 pt-0">
           {typingUsers.length > 0 &&

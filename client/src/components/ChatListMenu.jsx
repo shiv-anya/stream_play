@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { CiSearch } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
@@ -7,8 +7,9 @@ import { ChannelList, useChatContext } from "stream-chat-react";
 import ChatList from "./ChatList";
 import ChatElement from "./ChatElement";
 import GenericList from "./GenericList";
+import ThemeContext from "../ctx/ThemeContext";
 
-const SearchBar = () => {
+const SearchBar = ({ darkTheme }) => {
   const [openList, setOpenList] = useState(false);
   const { client } = useChatContext();
   const [usersList, setUsersList] = useState([]);
@@ -17,9 +18,12 @@ const SearchBar = () => {
       try {
         const response = await client.queryUsers(
           { role: "user" },
-          { limit: 30 }
+          { limit: 100 }
         );
-        setUsersList(response.users);
+        const filteredUsers = response.users.filter(
+          (user) => user.id !== client.userID
+        );
+        setUsersList(filteredUsers);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -28,11 +32,17 @@ const SearchBar = () => {
   }, []);
   return (
     <div className="flex w-full justify-between gap-2">
-      <form className="bg-gray-100 rounded-lg flex w-full flex-row">
+      <form
+        className={`bg-gray-100 rounded-lg flex w-full flex-row ${
+          darkTheme && "bg-gray-700 text-gray-300"
+        }`}
+      >
         <input
           type="text"
           placeholder="Search"
-          className="bg-gray-100 outline-none p-3 rounded-lg text-sm w-full"
+          className={`bg-gray-100 outline-none p-3 rounded-lg text-sm w-full ${
+            darkTheme && "bg-gray-700 text-gray-300"
+          }`}
         />
         <button className="p-3 text-xl text-gray-500">
           <CiSearch />
@@ -48,6 +58,7 @@ const SearchBar = () => {
       <button
         className="bg-indigo-500 p-3 rounded-lg text-xl text-white"
         onClick={() => setOpenList(true)}
+        title="New Message"
       >
         <IoMdAdd />
       </button>
@@ -136,15 +147,19 @@ const Stories = () => {
 
 const ChatListMenu = ({ onSelect, id }) => {
   const { client } = useChatContext();
+  const { darkTheme } = useContext(ThemeContext);
   return (
-    <div className="h-screen w-1/3 p-5 border-r border-gray-300">
-      <SearchBar />
+    <div
+      className={`h-screen w-1/3 p-5 border-r border-gray-300 ${
+        darkTheme && "bg-[#23272a] border-gray-700 text-gray-300"
+      }`}
+    >
+      <SearchBar darkTheme={darkTheme} />
       <Stories />
       <ChannelList
         filters={{
           type: "messaging",
           members: { $in: [client.userID] },
-          disabled: false,
         }}
         options={{ state: true, watch: true, presence: true }}
         sort={{ last_message_at: -1 }}

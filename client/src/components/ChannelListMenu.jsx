@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ChannelList, useChatContext } from "stream-chat-react";
 import Cookies from "universal-cookie";
 import { ChannelSearchBar, ChatElement, ChatList } from "./";
+import ThemeContext from "../ctx/ThemeContext";
 
 const ChannelListMenu = ({ onSelect, id }) => {
   const { client } = useChatContext();
   const [channels, setChannels] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { darkTheme } = useContext(ThemeContext);
 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -26,7 +28,13 @@ const ChannelListMenu = ({ onSelect, id }) => {
   }, [client]);
 
   return (
-    <div className="h-screen w-1/3 p-5 border-r border-gray-300">
+    <div
+      className={`h-screen w-1/3 p-5 border-r ${
+        darkTheme
+          ? "bg-[#23272a] border-gray-700 text-gray-300"
+          : "bg-white border-gray-300"
+      }`}
+    >
       <div className="w-full h-full">
         <ChannelSearchBar list={channels} />
         <ChannelList

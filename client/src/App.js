@@ -6,6 +6,8 @@ import { Login } from "./components";
 import { AllChats, AllChannels } from "./pages";
 import { Route, Routes } from "react-router";
 import { useLocation } from "react-router";
+import { useState } from "react";
+import ThemeContext from "./ctx/ThemeContext";
 
 const cookies = new Cookies();
 
@@ -29,6 +31,7 @@ if (authToken) {
 }
 
 function App() {
+  const [darkTheme, setDarkTheme] = useState(false);
   const location = useLocation();
   const customClasses = {
     chatContainer: "h-screen w-full",
@@ -43,15 +46,21 @@ function App() {
     return <h1 className="text-center text-xl">Setting up connection...</h1>;
   if (!authToken) return <Login />;
   return (
-    <Chat client={client} theme="team light" customClasses={customClasses}>
-      <Routes>
-        <Route path="/">
-          <Route path="" element={<Login />} />
-          <Route path="channels" element={<AllChannels />} />
-          <Route path="chats" element={<AllChats />} />
-        </Route>
-      </Routes>
-    </Chat>
+    <ThemeContext.Provider value={{ darkTheme, setDarkTheme }}>
+      <Chat
+        client={client}
+        theme={darkTheme ? "str-chat__theme-dark" : "str-chat__theme-light"}
+        customClasses={customClasses}
+      >
+        <Routes>
+          <Route path="/">
+            <Route path="" element={<Login />} />
+            <Route path="channels" element={<AllChannels />} />
+            <Route path="chats" element={<AllChats />} />
+          </Route>
+        </Routes>
+      </Chat>
+    </ThemeContext.Provider>
   );
 }
 

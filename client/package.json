@@ -19,7 +19,8 @@
     "react-scripts": "5.0.1",
     "stream-chat": "^8.47.0",
     "stream-chat-react": "^12.8.0",
-    "universal-cookie": "^7.2.2"
+    "universal-cookie": "^7.2.2",
+    "uuid": "^11.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
