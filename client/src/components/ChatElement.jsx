@@ -56,7 +56,7 @@ const ChatElement = ({
       } ${
         id === channel.data.id
           ? darkTheme
-            ? "bg-[#333333]"
+            ? "bg-gray-700"
             : "bg-gray-200"
           : ""
       }

@@ -9,9 +9,11 @@ import ChatElement from "./ChatElement";
 import GenericList from "./GenericList";
 import ThemeContext from "../ctx/ThemeContext";
 
-const SearchBar = ({ darkTheme }) => {
+const SearchBar = ({ darkTheme, onUserSelect }) => {
   const [openList, setOpenList] = useState(false);
   const { client } = useChatContext();
+  const [query, setQuery] = useState("");
+  const [users, setUsers] = useState([]);
   const [usersList, setUsersList] = useState([]);
   useEffect(() => {
     const fetchUsers = async () => {
@@ -30,23 +32,70 @@ const SearchBar = ({ darkTheme }) => {
     };
     fetchUsers();
   }, []);
+  useEffect(() => {
+    console.log(query);
+    if (!query) return setUsers([]);
+
+    const fetchUsers = async () => {
+      const response = await client.queryUsers({
+        name: { $autocomplete: query },
+      });
+      console.log(response.users);
+      setUsers(response.users);
+    };
+
+    fetchUsers();
+  }, [query]);
   return (
     <div className="flex w-full justify-between gap-2">
       <form
-        className={`bg-gray-100 rounded-lg flex w-full flex-row ${
-          darkTheme && "bg-gray-700 text-gray-300"
-        }`}
+        className={`${
+          darkTheme ? "bg-gray-700" : "bg-gray-100"
+        } rounded-lg flex w-full flex-row relative`}
       >
         <input
           type="text"
-          placeholder="Search"
-          className={`bg-gray-100 outline-none p-3 rounded-lg text-sm w-full ${
-            darkTheme && "bg-gray-700 text-gray-300"
-          }`}
+          placeholder="Search by username"
+          className={`${
+            darkTheme ? "bg-gray-700" : "bg-gray-100"
+          } outline-none p-3 rounded-lg text-sm w-full`}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
-        <button className="p-3 text-xl text-gray-500">
+        <div className="p-3 text-xl text-gray-500">
           <CiSearch />
-        </button>
+        </div>
+        {query.length > 0 && (
+          <ul
+            className={`absolute w-full border rounded-md shadow-lg z-10 top-14 p-1 ${
+              darkTheme
+                ? "bg-[#23272a] text-gray-300 border-gray-600"
+                : "bg-white text-gray-600 border-gray-300"
+            }`}
+          >
+            {users.length > 0 ? (
+              users.map((user) => (
+                <li
+                  key={user.id}
+                  className={`p-2 ${
+                    darkTheme ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                  } rounded-lg cursor-pointer`}
+                  onClick={() => onUserSelect(user)}
+                >
+                  {user.name}
+                </li>
+              ))
+            ) : (
+              <li
+                className={`p-2 ${
+                  darkTheme ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                } rounded-lg cursor-pointer`}
+              >
+                No results found!
+              </li>
+            )}
+          </ul>
+        )}
       </form>
       <Modal isOpen={openList} onClose={() => setOpenList(false)}>
         <GenericList
