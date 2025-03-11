@@ -33,14 +33,13 @@ const SearchBar = ({ darkTheme, onUserSelect }) => {
     fetchUsers();
   }, []);
   useEffect(() => {
-    console.log(query);
     if (!query) return setUsers([]);
 
     const fetchUsers = async () => {
       const response = await client.queryUsers({
         name: { $autocomplete: query },
       });
-      console.log(response.users);
+
       setUsers(response.users);
     };
 
