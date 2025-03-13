@@ -19,6 +19,7 @@ const GenericList = ({ list, type, onClose }) => {
         await channel.addMembers([client.user.id]);
       }
       navigate(`/channels/${channel.id}`);
+      await channel.watch();
       onClose();
     } catch (error) {
       console.error("Error joining or opening the channel:", error);
