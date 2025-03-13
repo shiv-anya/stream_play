@@ -8,13 +8,24 @@ import ChatList from "./ChatList";
 import ChatElement from "./ChatElement";
 import GenericList from "./GenericList";
 import ThemeContext from "../ctx/ThemeContext";
+import { useNavigate } from "react-router";
 
-const SearchBar = ({ darkTheme, onUserSelect }) => {
+const SearchBar = ({ darkTheme, onSelect }) => {
   const [openList, setOpenList] = useState(false);
   const { client } = useChatContext();
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [usersList, setUsersList] = useState([]);
+  const navigate = useNavigate();
+  const openUserChat = async (user) => {
+    const channel = client.channel("messaging", {
+      members: [client.user.id, user.id],
+    });
+    await channel.watch();
+    setQuery("");
+    onSelect(channel);
+  };
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -39,8 +50,10 @@ const SearchBar = ({ darkTheme, onUserSelect }) => {
       const response = await client.queryUsers({
         name: { $autocomplete: query },
       });
-
-      setUsers(response.users);
+      const filteredUsers = response.users.filter(
+        (user) => client._user.name !== user.name
+      );
+      setUsers(filteredUsers);
     };
 
     fetchUsers();
@@ -79,7 +92,7 @@ const SearchBar = ({ darkTheme, onUserSelect }) => {
                   className={`p-2 ${
                     darkTheme ? "hover:bg-gray-700" : "hover:bg-gray-100"
                   } rounded-lg cursor-pointer`}
-                  onClick={() => onUserSelect(user)}
+                  onClick={() => openUserChat(user)}
                 >
                   {user.name}
                 </li>
@@ -202,7 +215,7 @@ const ChatListMenu = ({ onSelect, id }) => {
         darkTheme && "bg-[#23272a] border-gray-700 text-gray-300"
       }`}
     >
-      <SearchBar darkTheme={darkTheme} />
+      <SearchBar darkTheme={darkTheme} onSelect={onSelect} />
       <Stories />
       <ChannelList
         filters={{

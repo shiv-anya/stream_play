@@ -36,7 +36,7 @@ const ChannelListMenu = ({ onSelect, id }) => {
       }`}
     >
       <div className="w-full h-full">
-        <ChannelSearchBar list={channels} />
+        <ChannelSearchBar list={channels} onSelect={onSelect} />
         <ChannelList
           filters={{ type: "team", members: { $in: [client.userID] } }}
           options={{ state: true, watch: true, presence: true }}

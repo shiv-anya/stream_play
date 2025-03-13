@@ -6,13 +6,18 @@ import Modal from "./UI/Modal";
 import CreateChannel from "./CreateChannel";
 import ThemeContext from "../ctx/ThemeContext";
 
-const ChannelSearchBar = ({ onChannelSelect }) => {
+const ChannelSearchBar = ({ onSelect }) => {
   const { client } = useChatContext();
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [openList, setOpenList] = useState(false);
   const [channels, setChannels] = useState([]);
   const { darkTheme } = useContext(ThemeContext);
+  const openChannelChat = async (channel) => {
+    await channel.watch();
+    setQuery("");
+    onSelect(channel);
+  };
   useEffect(() => {
     if (!query) return setChannels([]);
 
@@ -60,9 +65,9 @@ const ChannelSearchBar = ({ onChannelSelect }) => {
                   className={`p-2 ${
                     darkTheme ? "hover:bg-gray-700" : "hover:bg-gray-100"
                   } rounded-lg cursor-pointer`}
-                  onClick={() => onChannelSelect(user)}
+                  onClick={() => openChannelChat(user)}
                 >
-                  {user.name}
+                  {user.data.name}
                 </li>
               ))
             ) : (
