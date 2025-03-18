@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
-
 import { FaArrowLeft } from "react-icons/fa6";
 import { FaRegUser } from "react-icons/fa";
-import { IoMailOutline, IoCameraOutline, IoAtSharp } from "react-icons/io5";
+import { IoMailOutline, IoAtSharp } from "react-icons/io5";
 import { TbLockPassword } from "react-icons/tb";
 import { LuCircleCheckBig } from "react-icons/lu";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -21,49 +20,134 @@ const initialState = {
   username: "",
   email: "",
   password: "",
-  confirmPassword: "",
+  hashedPassword: "",
 };
 
 const FormDiv = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState(initialState);
+  const [formData, setFormData] = useState(initialState);
   const [isSignUp, setIsSignUp] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
   const toggleSignUp = () => {
     setIsSignUp((prevIsSignUp) => !prevIsSignUp);
   };
   const handleInputChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const checkUsernameExists = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/auth/check-username/${formData.username}`
+      );
+      const data = response.data;
+
+      if (data.exists) {
+        setErrors({ ...errors, username: "Username already exists" });
+      } else {
+        delete errors.username;
+        setErrors({ ...errors });
+      }
+    } catch (err) {
+      console.error("Error checking username:", err);
+    }
+  };
+
+  const searchByEmail = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/auth/check-email/${formData.email}`
+      );
+      const data = response.data;
+
+      if (data.exists) {
+        setErrors({ ...errors, email: "email already exists" });
+      } else {
+        delete errors.email;
+        setErrors({ ...errors });
+      }
+    } catch (err) {
+      console.error("Error checking email:", err);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (isSignUp) {
+      if (!formData.fullName.trim()) {
+        newErrors.fullName = "Full name is required";
+      }
+
+      if (!formData.email.trim()) {
+        newErrors.email = "Email is required";
+      } else {
+        if (!/\S+@\S+\.\S+/.test(formData.email)) {
+          newErrors.email = "Invalid email format";
+        } else searchByEmail();
+      }
+
+      if (formData.hashedPassword === "") {
+        newErrors.hashedPassword = "Confirm password is required";
+      } else if (formData.password !== formData.hashedPassword) {
+        newErrors.hashedPassword = "Passwords do not match";
+      } else {
+        delete errors.hashedPassword;
+      }
+    }
+    console.log(errors);
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required";
+    } else {
+      if (isSignUp) checkUsernameExists();
+      else delete newErrors.username;
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else delete errors.password;
+
+    setErrors(newErrors);
+  };
+
   const handleFormSubmit = async (e) => {
+    console.log(errors);
     e.preventDefault();
     setIsLoading(true);
-    const { fullName, username, email, password } = form;
-    const BASE_URL =
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3001"
-        : process.env.REACT_APP_BACKEND_URL;
-    const URL = `${BASE_URL}/auth`;
-    const {
-      data: { token, userId, hashedPassword },
-    } = await axios.post(`${URL}/${isSignUp ? "signup" : "login"}`, {
-      fullName,
-      username,
-      email,
-      password,
-    });
-    cookies.set("token", token);
-    cookies.set("username", username);
-    cookies.set("fullName", fullName);
-    cookies.set("userId", userId);
-    if (isSignUp) {
-      cookies.set("hashedPassword", hashedPassword);
-      cookies.set("email", email);
+    if (Object.keys(errors).length === 0) {
+      const { fullName, username, email, password } = formData;
+      const BASE_URL =
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:3001"
+          : process.env.REACT_APP_BACKEND_URL;
+      const URL = `${BASE_URL}/auth`;
+      const {
+        data: { token, userId, hashedPassword },
+      } = await axios.post(`${URL}/${isSignUp ? "signup" : "login"}`, {
+        fullName,
+        username,
+        email,
+        password,
+      });
+      cookies.set("token", token);
+      cookies.set("username", username);
+      cookies.set("fullName", fullName);
+      cookies.set("userId", userId);
+      if (isSignUp) {
+        cookies.set("hashedPassword", hashedPassword);
+        cookies.set("email", email);
+      }
+      setIsLoading(false);
+      navigate("/chats");
+      window.location.reload();
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-    navigate("/chats");
-    window.location.reload();
   };
+  useEffect(() => {
+    validateForm();
+  }, [formData]);
   return (
     <div className="h-screen w-1/2 flex items-center justify-center p-2">
       <div className="w-[55%]">
@@ -103,6 +187,7 @@ const FormDiv = () => {
                     <FaRegUser />
                   </label>
                   <input
+                    required
                     name="fullName"
                     onChange={handleInputChange}
                     type="text"
@@ -110,7 +195,11 @@ const FormDiv = () => {
                     className="w-full outline-none text-sm"
                   />
                 </div>
-                <div className="text-green-500">
+                <div
+                  className={`${
+                    errors.fullName ? "text-red-500" : "text-green-500"
+                  }`}
+                >
                   <LuCircleCheckBig />
                 </div>
               </div>
@@ -124,6 +213,7 @@ const FormDiv = () => {
                   <IoAtSharp />
                 </label>
                 <input
+                  required
                   name="username"
                   onChange={handleInputChange}
                   type="text"
@@ -131,7 +221,11 @@ const FormDiv = () => {
                   className="w-full outline-none text-sm"
                 />
               </div>
-              <div className="text-green-500">
+              <div
+                className={`${
+                  errors.username ? "text-red-500" : "text-green-500"
+                }`}
+              >
                 <LuCircleCheckBig />
               </div>
             </div>
@@ -145,6 +239,7 @@ const FormDiv = () => {
                     <IoMailOutline />
                   </label>
                   <input
+                    required
                     name="email"
                     onChange={handleInputChange}
                     type="email"
@@ -152,7 +247,11 @@ const FormDiv = () => {
                     className="w-full outline-none text-sm"
                   />
                 </div>
-                <div className="text-green-500">
+                <div
+                  className={`${
+                    errors.email ? "text-red-500" : "text-green-500"
+                  }`}
+                >
                   <LuCircleCheckBig />
                 </div>
               </div>
@@ -166,15 +265,20 @@ const FormDiv = () => {
                   <TbLockPassword />
                 </label>
                 <input
+                  required
                   name="password"
                   onChange={handleInputChange}
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   className="w-full outline-none text-sm"
+                  minLength={6}
                 />
               </div>
-              <div className="text-gray-500">
-                <FaRegEyeSlash />
+              <div
+                className="text-gray-300"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
               </div>
             </div>
             <div className="w-full bg-gray-200 h-[2px] rounded-lg"></div>
@@ -187,14 +291,19 @@ const FormDiv = () => {
                     <TbLockPassword />
                   </label>
                   <input
-                    name="confirmPassword"
+                    required
+                    name="hashedPassword"
                     onChange={handleInputChange}
                     type="password"
                     placeholder="Re-Type Password"
                     className="w-full outline-none text-sm"
                   />
                 </div>
-                <div className="text-green-500">
+                <div
+                  className={`${
+                    errors.hashedPassword ? "text-red-500" : "text-green-500"
+                  }`}
+                >
                   <LuCircleCheckBig />
                 </div>
               </div>
@@ -202,7 +311,13 @@ const FormDiv = () => {
             </div>
           )}
           <div className="flex w-full justify-between items-center">
-            <button className="bg-indigo-500 text-white flex items-center py-2 px-7 gap-4 rounded-3xl hover:bg-indigo-700 transition duration-300 ease-in-out">
+            <button
+              className={`bg-indigo-500 text-white flex items-center py-2 px-7 gap-4 rounded-3xl hover:bg-indigo-700 transition duration-300 ease-in-out ${
+                Object.keys(errors).length !== 0 &&
+                "disabled:bg-gray-400 disabled:cursor-not-allowed"
+              }`}
+              disabled={Object.keys(errors).length !== 0}
+            >
               {isSignUp ? "Sign Up" : "Sign In"}
               {isLoading ? (
                 <Oval
