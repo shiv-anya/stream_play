@@ -6,12 +6,12 @@ const StreamChat = require("stream-chat").StreamChat;
 const api_key = process.env.STREAM_API_KEY;
 const api_secret = process.env.STREAM_API_SECRET;
 const api_id = process.env.STREAM_API_ID;
+const serverClient = connect(api_key, api_secret, api_id);
 
 const signup = async (req, res) => {
   try {
     const { fullName, email, password, username } = req.body;
     const userId = crypto.randomBytes(16).toString("hex");
-    const serverClient = connect(api_key, api_secret, api_id);
     const hashedPassword = await bcrypt.hash(password, 10);
     const token = serverClient.createUserToken(userId);
     res
@@ -26,7 +26,6 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const serverClient = connect(api_key, api_secret, api_id);
     const client = StreamChat.getInstance(api_key, api_secret, {
       timeout: 6000,
     });
@@ -47,4 +46,42 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { login, signup };
+const checkUserExists = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    const client = StreamChat.getInstance(api_key, api_secret, {
+      timeout: 6000,
+    });
+    const { users } = await client.queryUsers({ name: username });
+    if (users.length > 0) {
+      return res.json({ exists: true });
+    } else {
+      return res.json({ exists: false });
+    }
+  } catch (error) {
+    console.error("Error checking username:", error);
+    res.status(500).json({ error: "Failed to check username" });
+  }
+};
+
+const checkEmailExists = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const client = StreamChat.getInstance(api_key, api_secret, {
+      timeout: 6000,
+    });
+    const { users } = await client.queryUsers({ email });
+    if (users.length > 0) {
+      return res.json({ exists: true });
+    } else {
+      return res.json({ exists: false });
+    }
+  } catch (error) {
+    console.error("Error checking username:", error);
+    res.status(500).json({ error: "Failed to check username" });
+  }
+};
+
+module.exports = { login, signup, checkUserExists, checkEmailExists };
